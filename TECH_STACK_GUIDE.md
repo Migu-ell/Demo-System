@@ -40,7 +40,7 @@ const scholarshipSchema = {
   _id: ObjectId,
   name: "Merit Excellence Scholarship",
   amount: 5000,
-  requirements: ["GPA >= 3.5", "Full-time enrollment"],
+  requirements: ["GWA >= 2.00", "Full-time enrollment"],
   deadline: "2025-12-15",
   category: "merit",
   documents_required: ["transcript", "essay", "recommendations"],
@@ -80,7 +80,7 @@ CREATE TABLE students (
     email VARCHAR(255) UNIQUE,
     name VARCHAR(255),
     student_id VARCHAR(50),
-    gpa DECIMAL(3,2),
+    GWA DECIMAL(3,2),
     phone VARCHAR(20),
     created_at TIMESTAMP
 );
@@ -115,13 +115,13 @@ CREATE TABLE applications (
 // For university-only access
 const googleConfig = {
   clientId: "your-google-client-id",
-  domain: "youruniversity.edu", // Restrict to university domain
+  domain: "g.batstate-u.edu.ph", // Restrict to university domain
   scopes: ["email", "profile"]
 }
 
 // Backend validation
 function validateUniversityEmail(email) {
-  return email.endsWith('@youruniversity.edu');
+  return email.endsWith('@g.batstate-u.edu.ph');
 }
 ```
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UniScholar - University Scholarship Management System</title>
+    <title>ScholarStreet - University Scholarship Management System</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -68,10 +68,113 @@
             margin: 0 5px;
         }
 
+        /* Mobile Navigation Styles */
+        .mobile-nav-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 280px;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            box-shadow: -5px 0 25px rgba(0,0,0,0.1);
+            transition: right 0.3s ease;
+            z-index: 1055;
+            overflow-y: auto;
+        }
+        
+        .mobile-nav-menu.active {
+            right: 0;
+        }
+        
+        .mobile-nav-content {
+            padding: 80px 20px 20px;
+        }
+        
+        .mobile-nav-link {
+            display: block;
+            padding: 15px 20px;
+            color: #2c3e50;
+            text-decoration: none;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .mobile-nav-link:hover {
+            background: rgba(52, 152, 219, 0.1);
+            color: #3498db;
+            transform: translateX(5px);
+        }
+        
+        .mobile-nav-btn {
+            display: block;
+            width: 100%;
+            padding: 15px 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            transition: all 0.3s;
+            text-align: left;
+        }
+        
+        .mobile-nav-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .mobile-nav-btn.logout-btn {
+            background: #e74c3c;
+            margin-top: 10px;
+        }
+        
+        .mobile-nav-btn.logout-btn:hover {
+            background: #c0392b;
+        }
+        
+        .mobile-nav-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #ddd, transparent);
+            margin: 20px 0;
+        }
+        
+        .navbar-toggler {
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+        
+        .navbar-toggler:focus {
+            box-shadow: none;
+        }
+        
+        /* Mobile Navigation Overlay */
+        .mobile-nav-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1054;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+        
+        .mobile-nav-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
         /* Enhanced Mobile Styles */
         @media (max-width: 768px) {
             .hero-section {
                 padding: 60px 0;
+                margin-top: 70px; /* Account for fixed navbar */
             }
             
             .hero-section h1 {
@@ -98,12 +201,20 @@
                 font-size: 1.1rem;
             }
             
+            .brand-text {
+                display: none; /* Hide "UniScholar" text on mobile */
+            }
+            
             .btn-lg {
                 padding: 12px 24px;
             }
             
             .modal-dialog {
                 margin: 10px;
+            }
+            
+            #dashboard {
+                margin-top: 70px; /* Account for fixed navbar */
             }
         }
 
@@ -170,9 +281,17 @@
     <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
             <a class="navbar-brand fw-bold" href="#home">
-                <i class="fas fa-graduation-cap text-primary me-2"></i>UniScholar
+                <i class="fas fa-graduation-cap text-primary me-2"></i>
+                <span class="brand-text">ScholarStreet</span>
             </a>
-            <div class="navbar-nav ms-auto">
+            
+            <!-- Mobile Hamburger Button -->
+            <button class="navbar-toggler border-0" type="button" id="mobileMenuBtn" onclick="toggleMobileMenu()">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <!-- Desktop Navigation -->
+            <div class="navbar-nav ms-auto d-none d-lg-flex">
                 <a class="nav-link" href="#home">Home</a>
                 <a class="nav-link" href="#scholarships">Scholarships</a>
                 <a class="nav-link" href="#about">About</a>
@@ -190,6 +309,36 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Mobile Navigation Menu -->
+        <div id="mobileNavMenu" class="mobile-nav-menu">
+            <div class="mobile-nav-content">
+                <a class="mobile-nav-link" href="#home" onclick="closeMobileMenu()">
+                    <i class="fas fa-home me-2"></i>Home
+                </a>
+                <a class="mobile-nav-link" href="#scholarships" onclick="closeMobileMenu()">
+                    <i class="fas fa-award me-2"></i>Scholarships
+                </a>
+                <a class="mobile-nav-link" href="#about" onclick="closeMobileMenu()">
+                    <i class="fas fa-info-circle me-2"></i>About
+                </a>
+                <div class="mobile-nav-divider"></div>
+                <button id="loginBtnMobile" class="mobile-nav-btn" onclick="showLogin(); closeMobileMenu();">
+                    <i class="fas fa-sign-in-alt me-2"></i>Login
+                </button>
+                <div id="userMenuMobile" class="hidden">
+                    <a class="mobile-nav-link" href="#dashboard" onclick="closeMobileMenu()">
+                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                    </a>
+                    <a class="mobile-nav-link" href="#profile" onclick="closeMobileMenu()">
+                        <i class="fas fa-user me-2"></i>Profile
+                    </a>
+                    <button class="mobile-nav-btn logout-btn" onclick="logout(); closeMobileMenu();">
+                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                    </button>
+                </div>
+            </div>
+        </div>
     </nav>
 
     <!-- Main Content Container -->
@@ -202,10 +351,10 @@
                     <div class="col-lg-8">
                         <h1 class="display-4 fw-bold mb-4">
                             <i class="fas fa-star text-warning me-3"></i>
-                            University Scholarship Portal
+                            ScholarStreet Portal
                         </h1>
                         <p class="lead mb-5">
-                            Secure access with your university Google account. Apply for scholarships, track your applications, and manage your academic funding opportunities.
+                            Your pathway to educational funding. Secure access with your university Google account. Apply for scholarships, track your applications, and navigate your academic funding journey.
                         </p>
                         <button class="btn btn-light btn-lg px-5 py-3" onclick="showLogin()">
                             <i class="fas fa-sign-in-alt me-2"></i>Get Started
@@ -230,23 +379,23 @@
                                     <p class="text-muted mb-0">Welcome back, <span id="dashboardUserName">John Doe</span></p>
                                 </div>
                                 <div class="text-end">
-                                    <small class="text-muted">Student ID: <strong>2024001</strong></small><br>
-                                    <small class="text-muted">GPA: <strong class="text-success">3.85</strong></small>
+                                    <small class="text-muted">Student ID: <strong>23-30094</strong></small><br>
+                                    <small class="text-muted">Year: <strong class="text-info">3rd Year</strong></small>
                                 </div>
                             </div>
 
                             <!-- Quick Stats -->
                             <div class="row g-3 mb-4">
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                     <div class="card border-primary">
                                         <div class="card-body text-center">
                                             <i class="fas fa-file-alt text-primary" style="font-size: 24px;"></i>
                                             <h5 class="mt-2 mb-1">5</h5>
-                                            <small class="text-muted">Applications</small>
+                                            <small class="text-muted">Total Applications</small>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                     <div class="card border-success">
                                         <div class="card-body text-center">
                                             <i class="fas fa-check-circle text-success" style="font-size: 24px;"></i>
@@ -255,21 +404,12 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                     <div class="card border-warning">
                                         <div class="card-body text-center">
                                             <i class="fas fa-clock text-warning" style="font-size: 24px;"></i>
                                             <h5 class="mt-2 mb-1">2</h5>
-                                            <small class="text-muted">Pending</small>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="card border-info">
-                                        <div class="card-body text-center">
-                                            <i class="fas fa-dollar-sign text-info" style="font-size: 24px;"></i>
-                                            <h5 class="mt-2 mb-1">$12,500</h5>
-                                            <small class="text-muted">Total Awarded</small>
+                                            <small class="text-muted">Under Review</small>
                                         </div>
                                     </div>
                                 </div>
@@ -297,15 +437,16 @@
                                 </h6>
                             </div>
                             <div class="card-body">
-                                <h5 class="text-primary">$5,000</h5>
-                                <p class="text-muted small mb-3">For students with GPA 3.5+</p>
+                                <h5 class="text-primary"></h5>
+                                <p class="text-muted small mb-3">For students with GWA 2.00+</p>
                                 
                                 <div class="mb-3">
                                     <small class="text-muted">Requirements:</small>
                                     <ul class="small mt-1">
-                                        <li>Minimum GPA: 3.5</li>
-                                        <li>Full-time enrollment</li>
-                                        <li>Essay required</li>
+                                        <li>GWA of 1.75 or higher</li>
+                                        <li>Upload latest semester grades</li>
+                                        <li>Certificate of enrollment</li>
+                                        <li>Letter of recommendation</li>
                                     </ul>
                                 </div>
 
@@ -331,15 +472,16 @@
                                 </h6>
                             </div>
                             <div class="card-body">
-                                <h5 class="text-success">$7,500</h5>
+                                <h5 class="text-success"></h5>
                                 <p class="text-muted small mb-3">Financial assistance program</p>
                                 
                                 <div class="mb-3">
                                     <small class="text-muted">Requirements:</small>
                                     <ul class="small mt-1">
-                                        <li>FAFSA completion</li>
-                                        <li>Income verification</li>
-                                        <li>Minimum GPA: 2.5</li>
+                                        <li>Family income certificate</li>
+                                        <li>Barangay indigency certificate</li>
+                                        <li>Latest semester grades</li>
+                                        <li>Parent's employment certificate</li>
                                     </ul>
                                 </div>
 
@@ -361,19 +503,20 @@
                         <div class="card scholarship-card h-100">
                             <div class="card-header bg-info text-white">
                                 <h6 class="mb-0">
-                                    <i class="fas fa-laptop-code me-2"></i>STEM Excellence
+                                    <i class="fas fa-laptop-code me-2"></i>IT Excellence
                                 </h6>
                             </div>
                             <div class="card-body">
-                                <h5 class="text-info">$10,000</h5>
-                                <p class="text-muted small mb-3">For STEM majors with research</p>
+                                <h5 class="text-info"></h5>
+                                <p class="text-muted small mb-3">For IT majors with research</p>
                                 
                                 <div class="mb-3">
                                     <small class="text-muted">Requirements:</small>
                                     <ul class="small mt-1">
-                                        <li>STEM major</li>
-                                        <li>Research portfolio</li>
-                                        <li>Professor recommendation</li>
+                                        <li>IT</li>
+                                        <li>GWA of 1.50 or higher</li>
+                                        <li>Research project certificate</li>
+                                        <li>Dean's recommendation letter</li>
                                     </ul>
                                 </div>
 
@@ -417,7 +560,7 @@
                                                 <i class="fas fa-graduation-cap text-primary me-2"></i>
                                                 Academic Excellence Award
                                             </td>
-                                            <td class="fw-bold text-success">$5,000</td>
+                                            <td class="fw-bold text-success"></td>
                                             <td>Nov 15, 2024</td>
                                             <td><span class="badge bg-success">Approved</span></td>
                                             <td>
@@ -429,28 +572,28 @@
                                         <tr>
                                             <td>
                                                 <i class="fas fa-users text-success me-2"></i>
-                                                Need-Based Aid
+                                                Need-Based Scholarship
                                             </td>
-                                            <td class="fw-bold text-success">$7,500</td>
+                                            <td class="fw-bold text-success"></td>
                                             <td>Oct 20, 2024</td>
                                             <td><span class="badge bg-warning">Under Review</span></td>
                                             <td>
                                                 <button class="btn btn-sm btn-outline-primary">
-                                                    <i class="fas fa-edit"></i> Edit
+                                                    <i class="fas fa-eye"></i> View
                                                 </button>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>
-                                                <i class="fas fa-book text-info me-2"></i>
-                                                Library Student Assistant
+                                                <i class="fas fa-exclamation-triangle text-danger me-2"></i>
+                                                IT Excellence Grant
                                             </td>
-                                            <td class="fw-bold text-success">$2,000</td>
+                                            <td class="fw-bold text-muted"></td>
                                             <td>Sep 10, 2024</td>
-                                            <td><span class="badge bg-success">Approved</span></td>
+                                            <td><span class="badge bg-danger">Rejected - GWA Requirement</span></td>
                                             <td>
-                                                <button class="btn btn-sm btn-outline-primary">
-                                                    <i class="fas fa-eye"></i> View
+                                                <button class="btn btn-sm btn-outline-danger" onclick="showRejectionReason()">
+                                                    <i class="fas fa-info-circle"></i> Details
                                                 </button>
                                             </td>
                                         </tr>
@@ -485,7 +628,7 @@
                                 <div class="text-center">
                                     <small class="text-muted">
                                         <i class="fas fa-shield-alt me-1"></i>
-                                        Only @youruniversity.edu accounts are allowed
+                                        Only @g.batstate-u.edu.ph accounts are allowed
                                     </small>
                                 </div>
                             </div>
@@ -495,7 +638,7 @@
                                 <div class="text-center mb-4">
                                     <i class="fas fa-check-circle text-success" style="font-size: 48px;"></i>
                                     <h5 class="mt-3">Email Verified!</h5>
-                                    <p class="text-muted">Welcome, <span id="verifiedEmail">student@youruniversity.edu</span></p>
+                                    <p class="text-muted">Welcome, <span id="verifiedEmail">student@g.batstate-u.edu.ph</span></p>
                                 </div>
                                 <button class="btn btn-success w-100" onclick="requestOTP()">
                                     <i class="fas fa-mobile-alt me-2"></i>
@@ -622,16 +765,26 @@
             
             // Simulate Google OAuth process
             setTimeout(() => {
-                // Simulate successful Google login
-                document.getElementById('googleAuthSection').classList.add('hidden');
-                document.getElementById('emailVerificationSection').classList.remove('hidden');
-                document.getElementById('verifiedEmail').textContent = 'john.doe@youruniversity.edu';
+                // Simulate email validation check
+                const isValidUniversityEmail = true; // In real app: check if email ends with @g.batstate-u.edu.ph
+                
+                if (isValidUniversityEmail) {
+                    // Simulate successful Google login
+                    document.getElementById('googleAuthSection').classList.add('hidden');
+                    document.getElementById('emailVerificationSection').classList.remove('hidden');
+                    document.getElementById('verifiedEmail').textContent = 'john.doe@g.batstate-u.edu.ph';
+                    
+                    console.log('Batangas State University email verified successfully');
+                } else {
+                    alert('Access denied. Only Batangas State University (@g.batstate-u.edu.ph) accounts are allowed.');
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                    return;
+                }
                 
                 // Reset button (though it's now hidden)
                 btn.innerHTML = originalText;
                 btn.disabled = false;
-                
-                console.log('Google OAuth simulation completed');
             }, 2000);
         }
 
@@ -649,7 +802,7 @@
                 
                 // Simulate sending SMS
                 setTimeout(() => {
-                    alert('Demo: OTP sent to your registered phone number!\nFor demo purposes, enter: 123456');
+                    alert('ScholarStreet Demo: OTP sent to your registered phone number!\nFor demo purposes, enter: 123456');
                 }, 1000);
             }, 300);
         }
@@ -709,7 +862,7 @@
                 
                 // Simulate successful login
                 setTimeout(() => {
-                    completeLogin('John Doe', 'john.doe@youruniversity.edu');
+                    completeLogin('John Doe', 'john.doe@g.batstate-u.edu.ph');
                 }, 500);
             } else {
                 alert('Invalid OTP code. For demo, please enter: 123456');
@@ -742,11 +895,15 @@
             isLoggedIn = true;
             currentUser = { name: userName, email: email };
             
-            // Update UI
+            // Update desktop UI
             document.getElementById('loginBtn').classList.add('hidden');
             document.getElementById('userMenu').classList.remove('hidden');
             document.getElementById('userName').textContent = userName.split(' ')[0];
             document.getElementById('dashboardUserName').textContent = userName;
+            
+            // Update mobile UI
+            document.getElementById('loginBtnMobile').classList.add('hidden');
+            document.getElementById('userMenuMobile').classList.remove('hidden');
             
             // Show dashboard
             showSection('dashboard');
@@ -761,8 +918,15 @@
             if (confirm('Are you sure you want to logout?')) {
                 isLoggedIn = false;
                 currentUser = null;
+                
+                // Update desktop UI
                 document.getElementById('loginBtn').classList.remove('hidden');
                 document.getElementById('userMenu').classList.add('hidden');
+                
+                // Update mobile UI
+                document.getElementById('loginBtnMobile').classList.remove('hidden');
+                document.getElementById('userMenuMobile').classList.add('hidden');
+                
                 showSection('home');
                 
                 // Clear any timers
@@ -771,6 +935,66 @@
                 }
             }
         }
+
+        // Mobile Navigation Functions
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileNavMenu');
+            const overlay = document.getElementById('mobileNavOverlay');
+            
+            if (menu.classList.contains('active')) {
+                closeMobileMenu();
+            } else {
+                openMobileMenu();
+            }
+        }
+
+        function openMobileMenu() {
+            const menu = document.getElementById('mobileNavMenu');
+            let overlay = document.getElementById('mobileNavOverlay');
+            
+            // Create overlay if it doesn't exist
+            if (!overlay) {
+                overlay = document.createElement('div');
+                overlay.id = 'mobileNavOverlay';
+                overlay.className = 'mobile-nav-overlay';
+                overlay.onclick = closeMobileMenu;
+                document.body.appendChild(overlay);
+            }
+            
+            menu.classList.add('active');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+        }
+
+        function closeMobileMenu() {
+            const menu = document.getElementById('mobileNavMenu');
+            const overlay = document.getElementById('mobileNavOverlay');
+            
+            menu.classList.remove('active');
+            if (overlay) {
+                overlay.classList.remove('active');
+            }
+            document.body.style.overflow = ''; // Restore scrolling
+        }
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(e) {
+            const menu = document.getElementById('mobileNavMenu');
+            const menuBtn = document.getElementById('mobileMenuBtn');
+            
+            if (menu.classList.contains('active') && 
+                !menu.contains(e.target) && 
+                !menuBtn.contains(e.target)) {
+                closeMobileMenu();
+            }
+        });
+
+        // Close mobile menu on window resize (if switching to desktop)
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 992) { // Bootstrap lg breakpoint
+                closeMobileMenu();
+            }
+        });
 
         function applyForScholarship(scholarshipType) {
             if (!isLoggedIn) {
@@ -783,7 +1007,7 @@
             const scholarshipNames = {
                 'merit': 'Merit Scholarship',
                 'need': 'Need-Based Aid',
-                'stem': 'STEM Excellence'
+                'IT': 'IT Excellence'
             };
             
             const scholarshipName = scholarshipNames[scholarshipType] || 'Scholarship';
@@ -794,6 +1018,22 @@
                     alert(`Application for ${scholarshipName} has been submitted successfully!\n\nYou will receive a confirmation email shortly.`);
                 }, 1000);
             }
+        }
+
+        function showRejectionReason() {
+            alert(`Application Rejected - Details:
+
+📋 Scholarship: IT Excellence Grant
+❌ Reason: GWA Requirement Not Met
+
+Requirements:
+• GWA of 1.50 or higher required
+• Your submitted GWA: 2.25
+
+📧 Email notification sent via SendGrid
+📱 SMS notification sent via Semaphore
+
+You can apply for other scholarships that match your current GWA.`);
         }
 
         // Navigation handlers
@@ -825,7 +1065,7 @@
             `;
             notification.innerHTML = `
                 <i class="fas fa-info-circle me-2"></i>
-                <strong>Demo Mode:</strong> Use any @youruniversity.edu email and OTP: 123456
+                <strong>ScholarStreet Demo:</strong> Use any @g.batstate-u.edu.ph email and OTP: 123456
             `;
             
             document.body.appendChild(notification);

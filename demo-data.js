@@ -1,4 +1,4 @@
-// Mock API Data for University Scholarship System Demo
+// Mock API Data for ScholarStreet - University Scholarship System Demo
 // This simulates what would come from your Laravel backend
 
 // Mock Database - Scholarships
@@ -9,7 +9,7 @@ const scholarshipsDB = [
         amount: 5000,
         description: "For students with outstanding academic performance",
         requirements: [
-            "Minimum GPA: 3.5",
+            "Minimum GWA: 2.00",
             "Full-time enrollment",
             "Essay submission required",
             "Two letters of recommendation"
@@ -28,7 +28,7 @@ const scholarshipsDB = [
         requirements: [
             "FAFSA completion required",
             "Family income verification",
-            "Minimum GPA: 2.5",
+            "Minimum GWA: 2.5",
             "Community service hours"
         ],
         deadline: "2025-01-30",
@@ -39,17 +39,17 @@ const scholarshipsDB = [
     },
     {
         id: 3,
-        name: "STEM Innovation Grant",
+        name: "IT Innovation Grant",
         amount: 10000,
-        description: "Supporting future innovators in STEM fields",
+        description: "Supporting future innovators in IT fields",
         requirements: [
-            "STEM major enrollment",
+            "IT major enrollment",
             "Research project portfolio",
             "Professor recommendation",
             "Presentation required"
         ],
         deadline: "2025-02-28",
-        category: "stem",
+        category: "IT",
         available_spots: 15,
         total_applicants: 75,
         status: "active"
@@ -61,7 +61,7 @@ const scholarshipsDB = [
         description: "Exclusive scholarship for international students",
         requirements: [
             "International student status",
-            "Minimum GPA: 3.0",
+            "Minimum GWA: 3.0",
             "Cultural contribution essay",
             "Language proficiency proof"
         ],
@@ -79,7 +79,7 @@ const scholarshipsDB = [
         requirements: [
             "Leadership experience",
             "Community involvement",
-            "Minimum GPA: 3.0",
+            "Minimum GWA: 3.0",
             "Interview required"
         ],
         deadline: "2025-04-10",
@@ -90,14 +90,14 @@ const scholarshipsDB = [
     }
 ];
 
-// Mock Database - Student Profile
+// Mock Database - Student Profile (Batangas State University)
 const studentProfile = {
-    id: "2024001",
+    id: "23-30094",
     name: "John Doe",
-    email: "john.doe@youruniversity.edu",
+    email: "john.doe@g.batstate-u.edu.ph",
     phone: "+1 (555) 123-4567",
-    gpa: 3.85,
-    major: "Computer Science",
+    GWA: 3.85,
+    major: "Information Technology",
     year: "Junior",
     enrollment_status: "Full-time",
     total_credits: 95,
@@ -115,7 +115,7 @@ const studentProfile = {
 const applicationsDB = [
     {
         id: 1,
-        student_id: "2024001",
+        student_id: "23-30094",
         scholarship_id: 1,
         application_date: "2024-11-15",
         status: "approved",
@@ -126,7 +126,7 @@ const applicationsDB = [
     },
     {
         id: 2,
-        student_id: "2024001",
+        student_id: "23-30094",
         scholarship_id: 2,
         application_date: "2024-10-20",
         status: "under_review",
@@ -137,7 +137,7 @@ const applicationsDB = [
     },
     {
         id: 3,
-        student_id: "2024001",
+        student_id: "23-30094",
         scholarship_id: 4,
         application_date: "2024-09-10",
         status: "approved",
@@ -230,15 +230,15 @@ class ScholarshipAPI {
                     return;
                 }
 
-                // Check GPA requirements
-                if (scholarship.category === 'merit' && studentProfile.gpa < 3.5) {
+                // Check GWA requirements
+                if (scholarship.category === 'merit' && studentProfile.GWA < 2.00) {
                     eligible = false;
-                    reasons.push("GPA requirement not met (3.5 required)");
+                    reasons.push("GWA requirement not met (2.00 required)");
                 }
 
-                if (scholarship.category === 'stem' && studentProfile.major !== 'Computer Science' && studentProfile.major !== 'Engineering') {
+                if (scholarship.category === 'IT' && studentProfile.major !== 'Information Technology' && studentProfile.major !== 'Engineering') {
                     eligible = false;
-                    reasons.push("Not enrolled in eligible STEM program");
+                    reasons.push("Not enrolled in eligible IT program");
                 }
 
                 // Check if already applied
