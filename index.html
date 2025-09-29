@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniScholar - University Scholarship Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background: rgba(255,255,255,0.95) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+        
+        .hero-section {
+            padding: 80px 0;
+            color: white;
+            text-align: center;
+        }
+        
+        .auth-card {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            margin: 20px 0;
+        }
+        
+        .google-btn {
+            background: #4285f4;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 16px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(66, 133, 244, 0.3);
+        }
+        
+        .google-btn:hover {
+            background: #357ae8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(66, 133, 244, 0.4);
+        }
+        
+        .otp-input {
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+            text-align: center;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            margin: 0 5px;
+        }
+
+        /* Enhanced Mobile Styles */
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 60px 0;
+            }
+            
+            .hero-section h1 {
+                font-size: 2.5rem;
+            }
+            
+            .auth-card {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+            
+            .otp-input {
+                width: 45px;
+                height: 45px;
+                font-size: 18px;
+                margin: 0 2px;
+            }
+            
+            .scholarship-card {
+                margin-bottom: 15px;
+            }
+            
+            .navbar-brand {
+                font-size: 1.1rem;
+            }
+            
+            .btn-lg {
+                padding: 12px 24px;
+            }
+            
+            .modal-dialog {
+                margin: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-section h1 {
+                font-size: 2rem;
+            }
+            
+            .display-4 {
+                font-size: 2rem;
+            }
+            
+            .auth-card {
+                padding: 20px 15px;
+            }
+            
+            .otp-input {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+                margin: 0 1px;
+            }
+            
+            .google-btn {
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+        }
+        
+        .scholarship-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            margin-bottom: 20px;
+        }
+        
+        .scholarship-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .status-badge {
+            font-size: 12px;
+            padding: 5px 12px;
+            border-radius: 20px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#home">
+                <i class="fas fa-graduation-cap text-primary me-2"></i>UniScholar
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="#home">Home</a>
+                <a class="nav-link" href="#scholarships">Scholarships</a>
+                <a class="nav-link" href="#about">About</a>
+                <button id="loginBtn" class="btn btn-primary ms-2">Login</button>
+                <div id="userMenu" class="dropdown ms-2 hidden">
+                    <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-user me-1"></i><span id="userName">Student</span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#dashboard">Dashboard</a></li>
+                        <li><a class="dropdown-item" href="#profile">Profile</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" onclick="logout()">Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <div class="container-fluid p-0">
+        
+        <!-- Home/Landing Section -->
+        <section id="home" class="hero-section">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <h1 class="display-4 fw-bold mb-4">
+                            <i class="fas fa-star text-warning me-3"></i>
+                            University Scholarship Portal
+                        </h1>
+                        <p class="lead mb-5">
+                            Secure access with your university Google account. Apply for scholarships, track your applications, and manage your academic funding opportunities.
+                        </p>
+                        <button class="btn btn-light btn-lg px-5 py-3" onclick="showLogin()">
+                            <i class="fas fa-sign-in-alt me-2"></i>Get Started
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="py-5 hidden">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="bg-white rounded-4 shadow-lg p-4 mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div>
+                                    <h2 class="mb-1">
+                                        <i class="fas fa-tachometer-alt text-primary me-2"></i>
+                                        Student Dashboard
+                                    </h2>
+                                    <p class="text-muted mb-0">Welcome back, <span id="dashboardUserName">John Doe</span></p>
+                                </div>
+                                <div class="text-end">
+                                    <small class="text-muted">Student ID: <strong>2024001</strong></small><br>
+                                    <small class="text-muted">GPA: <strong class="text-success">3.85</strong></small>
+                                </div>
+                            </div>
+
+                            <!-- Quick Stats -->
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-3">
+                                    <div class="card border-primary">
+                                        <div class="card-body text-center">
+                                            <i class="fas fa-file-alt text-primary" style="font-size: 24px;"></i>
+                                            <h5 class="mt-2 mb-1">5</h5>
+                                            <small class="text-muted">Applications</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card border-success">
+                                        <div class="card-body text-center">
+                                            <i class="fas fa-check-circle text-success" style="font-size: 24px;"></i>
+                                            <h5 class="mt-2 mb-1">2</h5>
+                                            <small class="text-muted">Approved</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card border-warning">
+                                        <div class="card-body text-center">
+                                            <i class="fas fa-clock text-warning" style="font-size: 24px;"></i>
+                                            <h5 class="mt-2 mb-1">2</h5>
+                                            <small class="text-muted">Pending</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card border-info">
+                                        <div class="card-body text-center">
+                                            <i class="fas fa-dollar-sign text-info" style="font-size: 24px;"></i>
+                                            <h5 class="mt-2 mb-1">$12,500</h5>
+                                            <small class="text-muted">Total Awarded</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Available Scholarships -->
+                <div class="row">
+                    <div class="col-12">
+                        <h3 class="mb-4 text-white">
+                            <i class="fas fa-award me-2"></i>Available Scholarships
+                        </h3>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Scholarship Card 1 -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="card scholarship-card h-100">
+                            <div class="card-header bg-primary text-white">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-star me-2"></i>Merit Scholarship
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="text-primary">$5,000</h5>
+                                <p class="text-muted small mb-3">For students with GPA 3.5+</p>
+                                
+                                <div class="mb-3">
+                                    <small class="text-muted">Requirements:</small>
+                                    <ul class="small mt-1">
+                                        <li>Minimum GPA: 3.5</li>
+                                        <li>Full-time enrollment</li>
+                                        <li>Essay required</li>
+                                    </ul>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="status-badge bg-success text-white">Eligible</span>
+                                    <small class="text-muted">Due: Dec 15</small>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <a href="application.html" class="btn btn-primary btn-sm w-100">
+                                    <i class="fas fa-paper-plane me-1"></i>Apply Now
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Scholarship Card 2 -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="card scholarship-card h-100">
+                            <div class="card-header bg-success text-white">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-users me-2"></i>Need-Based Aid
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="text-success">$7,500</h5>
+                                <p class="text-muted small mb-3">Financial assistance program</p>
+                                
+                                <div class="mb-3">
+                                    <small class="text-muted">Requirements:</small>
+                                    <ul class="small mt-1">
+                                        <li>FAFSA completion</li>
+                                        <li>Income verification</li>
+                                        <li>Minimum GPA: 2.5</li>
+                                    </ul>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="status-badge bg-warning text-dark">Applied</span>
+                                    <small class="text-muted">Due: Jan 30</small>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <button class="btn btn-outline-success btn-sm w-100" disabled>
+                                    <i class="fas fa-check me-1"></i>Application Submitted
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Scholarship Card 3 -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="card scholarship-card h-100">
+                            <div class="card-header bg-info text-white">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-laptop-code me-2"></i>STEM Excellence
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="text-info">$10,000</h5>
+                                <p class="text-muted small mb-3">For STEM majors with research</p>
+                                
+                                <div class="mb-3">
+                                    <small class="text-muted">Requirements:</small>
+                                    <ul class="small mt-1">
+                                        <li>STEM major</li>
+                                        <li>Research portfolio</li>
+                                        <li>Professor recommendation</li>
+                                    </ul>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="status-badge bg-danger text-white">Not Eligible</span>
+                                    <small class="text-muted">Due: Feb 28</small>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <button class="btn btn-outline-secondary btn-sm w-100" disabled>
+                                    <i class="fas fa-times me-1"></i>Requirements Not Met
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Application History -->
+                <div class="row mt-5">
+                    <div class="col-12">
+                        <div class="bg-white rounded-4 shadow-lg p-4">
+                            <h4 class="mb-3">
+                                <i class="fas fa-history text-primary me-2"></i>
+                                Application History
+                            </h4>
+                            
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Scholarship</th>
+                                            <th>Amount</th>
+                                            <th>Applied Date</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <i class="fas fa-graduation-cap text-primary me-2"></i>
+                                                Academic Excellence Award
+                                            </td>
+                                            <td class="fw-bold text-success">$5,000</td>
+                                            <td>Nov 15, 2024</td>
+                                            <td><span class="badge bg-success">Approved</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-eye"></i> View
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <i class="fas fa-users text-success me-2"></i>
+                                                Need-Based Aid
+                                            </td>
+                                            <td class="fw-bold text-success">$7,500</td>
+                                            <td>Oct 20, 2024</td>
+                                            <td><span class="badge bg-warning">Under Review</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-edit"></i> Edit
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <i class="fas fa-book text-info me-2"></i>
+                                                Library Student Assistant
+                                            </td>
+                                            <td class="fw-bold text-success">$2,000</td>
+                                            <td>Sep 10, 2024</td>
+                                            <td><span class="badge bg-success">Approved</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-eye"></i> View
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Login Modal -->
+        <div class="modal fade" id="loginModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0">
+                    <div class="modal-body p-0">
+                        <div class="auth-card">
+                            <button type="button" class="btn-close float-end" data-bs-dismiss="modal"></button>
+                            <div class="text-center mb-4">
+                                <i class="fas fa-university text-primary" style="font-size: 48px;"></i>
+                                <h4 class="mt-3 mb-2">University Login</h4>
+                                <p class="text-muted">Access with your university Google account</p>
+                            </div>
+                            
+                            <!-- Google OAuth Section -->
+                            <div id="googleAuthSection">
+                                <button class="google-btn w-100 mb-3" onclick="initiateGoogleLogin()">
+                                    <i class="fab fa-google me-3"></i>
+                                    Continue with University Google Account
+                                </button>
+                                <div class="text-center">
+                                    <small class="text-muted">
+                                        <i class="fas fa-shield-alt me-1"></i>
+                                        Only @youruniversity.edu accounts are allowed
+                                    </small>
+                                </div>
+                            </div>
+
+                            <!-- Email Verification (after Google login) -->
+                            <div id="emailVerificationSection" class="hidden">
+                                <div class="text-center mb-4">
+                                    <i class="fas fa-check-circle text-success" style="font-size: 48px;"></i>
+                                    <h5 class="mt-3">Email Verified!</h5>
+                                    <p class="text-muted">Welcome, <span id="verifiedEmail">student@youruniversity.edu</span></p>
+                                </div>
+                                <button class="btn btn-success w-100" onclick="requestOTP()">
+                                    <i class="fas fa-mobile-alt me-2"></i>
+                                    Send OTP to Phone
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- OTP Verification Modal -->
+        <div class="modal fade" id="otpModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0">
+                    <div class="modal-body p-0">
+                        <div class="auth-card">
+                            <button type="button" class="btn-close float-end" data-bs-dismiss="modal"></button>
+                            <div class="text-center mb-4">
+                                <i class="fas fa-sms text-primary" style="font-size: 48px;"></i>
+                                <h4 class="mt-3 mb-2">Verify Phone Number</h4>
+                                <p class="text-muted">Enter the 6-digit code sent to your phone</p>
+                                <small class="text-info">
+                                    <i class="fas fa-mobile-alt me-1"></i>
+                                    Code sent to: <span id="phoneNumber">+1 (555) 123-****</span>
+                                </small>
+                            </div>
+
+                            <!-- OTP Input -->
+                            <div class="text-center mb-4">
+                                <div class="d-flex justify-content-center">
+                                    <input type="text" class="otp-input" maxlength="1" id="otp1" onkeyup="moveToNext(this, 'otp2')">
+                                    <input type="text" class="otp-input" maxlength="1" id="otp2" onkeyup="moveToNext(this, 'otp3')">
+                                    <input type="text" class="otp-input" maxlength="1" id="otp3" onkeyup="moveToNext(this, 'otp4')">
+                                    <input type="text" class="otp-input" maxlength="1" id="otp4" onkeyup="moveToNext(this, 'otp5')">
+                                    <input type="text" class="otp-input" maxlength="1" id="otp5" onkeyup="moveToNext(this, 'otp6')">
+                                    <input type="text" class="otp-input" maxlength="1" id="otp6" onkeyup="verifyOTP()">
+                                </div>
+                            </div>
+
+                            <button class="btn btn-primary w-100 mb-3" onclick="verifyOTP()">
+                                <i class="fas fa-check me-2"></i>Verify & Complete Registration
+                            </button>
+
+                            <div class="text-center">
+                                <small class="text-muted">
+                                    Didn't receive code? 
+                                    <a href="#" onclick="resendOTP()" class="text-primary">Resend OTP</a>
+                                </small>
+                            </div>
+
+                            <!-- Timer -->
+                            <div class="text-center mt-2">
+                                <small class="text-warning">
+                                    <i class="fas fa-clock me-1"></i>
+                                    Expires in: <span id="otpTimer">05:00</span>
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="demo-data.js"></script>
+    <script>
+        // Global state
+        let currentUser = null;
+        let isLoggedIn = false;
+        let otpTimer = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            showSection('home');
+        });
+
+        // Section Navigation
+        function showSection(sectionId) {
+            // Hide all sections
+            const sections = ['home', 'dashboard'];
+            sections.forEach(section => {
+                const element = document.getElementById(section);
+                if (element) {
+                    element.classList.add('hidden');
+                }
+            });
+            
+            // Show requested section
+            const targetSection = document.getElementById(sectionId);
+            if (targetSection) {
+                targetSection.classList.remove('hidden');
+                targetSection.classList.add('fade-in');
+            }
+        }
+
+        // Login Flow
+        function showLogin() {
+            const modal = new bootstrap.Modal(document.getElementById('loginModal'));
+            modal.show();
+            
+            // Reset login sections
+            document.getElementById('googleAuthSection').classList.remove('hidden');
+            document.getElementById('emailVerificationSection').classList.add('hidden');
+        }
+
+        function initiateGoogleLogin(event) {
+            // Prevent any default behavior
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            
+            // Get the button element
+            const btn = event ? event.target : document.querySelector('.google-btn');
+            const originalText = btn.innerHTML;
+            
+            // Show loading state immediately
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Connecting to Google...';
+            btn.disabled = true;
+            
+            // Simulate Google OAuth process
+            setTimeout(() => {
+                // Simulate successful Google login
+                document.getElementById('googleAuthSection').classList.add('hidden');
+                document.getElementById('emailVerificationSection').classList.remove('hidden');
+                document.getElementById('verifiedEmail').textContent = 'john.doe@youruniversity.edu';
+                
+                // Reset button (though it's now hidden)
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                
+                console.log('Google OAuth simulation completed');
+            }, 2000);
+        }
+
+        function requestOTP() {
+            // Show OTP modal and hide login modal
+            const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+            loginModal.hide();
+            
+            setTimeout(() => {
+                const otpModal = new bootstrap.Modal(document.getElementById('otpModal'));
+                otpModal.show();
+                
+                // Start OTP timer
+                startOTPTimer();
+                
+                // Simulate sending SMS
+                setTimeout(() => {
+                    alert('Demo: OTP sent to your registered phone number!\nFor demo purposes, enter: 123456');
+                }, 1000);
+            }, 300);
+        }
+
+        function startOTPTimer() {
+            let timeLeft = 300; // 5 minutes in seconds
+            const timerElement = document.getElementById('otpTimer');
+            
+            otpTimer = setInterval(() => {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(otpTimer);
+                    timerElement.textContent = 'Expired';
+                    alert('OTP has expired. Please request a new one.');
+                }
+                timeLeft--;
+            }, 1000);
+        }
+
+        function moveToNext(current, nextFieldId) {
+            if (current.value.length === 1) {
+                const nextField = document.getElementById(nextFieldId);
+                if (nextField) {
+                    nextField.focus();
+                }
+            }
+        }
+
+        function verifyOTP() {
+            // Get all OTP values
+            const otp = [];
+            for (let i = 1; i <= 6; i++) {
+                const value = document.getElementById(`otp${i}`).value;
+                otp.push(value);
+            }
+            
+            const otpString = otp.join('');
+            
+            if (otpString.length !== 6) {
+                alert('Please enter the complete 6-digit OTP code.');
+                return;
+            }
+            
+            // For demo purposes, accept 123456 as valid OTP
+            if (otpString === '123456') {
+                // Clear timer
+                if (otpTimer) {
+                    clearInterval(otpTimer);
+                }
+                
+                // Close OTP modal
+                const otpModal = bootstrap.Modal.getInstance(document.getElementById('otpModal'));
+                otpModal.hide();
+                
+                // Simulate successful login
+                setTimeout(() => {
+                    completeLogin('John Doe', 'john.doe@youruniversity.edu');
+                }, 500);
+            } else {
+                alert('Invalid OTP code. For demo, please enter: 123456');
+                // Clear OTP fields
+                for (let i = 1; i <= 6; i++) {
+                    document.getElementById(`otp${i}`).value = '';
+                }
+                document.getElementById('otp1').focus();
+            }
+        }
+
+        function resendOTP() {
+            alert('Demo: New OTP sent to your phone!\nFor demo purposes, use: 123456');
+            
+            // Reset timer
+            if (otpTimer) {
+                clearInterval(otpTimer);
+            }
+            startOTPTimer();
+            
+            // Clear OTP fields
+            for (let i = 1; i <= 6; i++) {
+                document.getElementById(`otp${i}`).value = '';
+            }
+            document.getElementById('otp1').focus();
+        }
+
+        function completeLogin(userName, email) {
+            // Set login state
+            isLoggedIn = true;
+            currentUser = { name: userName, email: email };
+            
+            // Update UI
+            document.getElementById('loginBtn').classList.add('hidden');
+            document.getElementById('userMenu').classList.remove('hidden');
+            document.getElementById('userName').textContent = userName.split(' ')[0];
+            document.getElementById('dashboardUserName').textContent = userName;
+            
+            // Show dashboard
+            showSection('dashboard');
+            
+            // Show success message
+            setTimeout(() => {
+                alert(`Welcome ${userName}! Your account has been successfully verified.`);
+            }, 1000);
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                isLoggedIn = false;
+                currentUser = null;
+                document.getElementById('loginBtn').classList.remove('hidden');
+                document.getElementById('userMenu').classList.add('hidden');
+                showSection('home');
+                
+                // Clear any timers
+                if (otpTimer) {
+                    clearInterval(otpTimer);
+                }
+            }
+        }
+
+        function applyForScholarship(scholarshipType) {
+            if (!isLoggedIn) {
+                alert('Please login first to apply for scholarships.');
+                showLogin();
+                return;
+            }
+            
+            // Simulate application process
+            const scholarshipNames = {
+                'merit': 'Merit Scholarship',
+                'need': 'Need-Based Aid',
+                'stem': 'STEM Excellence'
+            };
+            
+            const scholarshipName = scholarshipNames[scholarshipType] || 'Scholarship';
+            
+            if (confirm(`Are you sure you want to apply for the ${scholarshipName}?`)) {
+                // Simulate application submission
+                setTimeout(() => {
+                    alert(`Application for ${scholarshipName} has been submitted successfully!\n\nYou will receive a confirmation email shortly.`);
+                }, 1000);
+            }
+        }
+
+        // Navigation handlers
+        document.addEventListener('click', function(e) {
+            if (e.target.getAttribute('href') === '#dashboard' && isLoggedIn) {
+                e.preventDefault();
+                showSection('dashboard');
+            } else if (e.target.getAttribute('href') === '#home') {
+                e.preventDefault();
+                showSection('home');
+            }
+        });
+
+        // Demo notification on page load
+        setTimeout(() => {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 80px;
+                right: 20px;
+                background: #28a745;
+                color: white;
+                padding: 15px 20px;
+                border-radius: 10px;
+                box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+                z-index: 1060;
+                font-size: 14px;
+                max-width: 300px;
+            `;
+            notification.innerHTML = `
+                <i class="fas fa-info-circle me-2"></i>
+                <strong>Demo Mode:</strong> Use any @youruniversity.edu email and OTP: 123456
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.transition = 'opacity 0.5s';
+                notification.style.opacity = '0';
+                setTimeout(() => notification.remove(), 500);
+            }, 8000);
+        }, 2000);
+    </script>
+</body>
+</html>
